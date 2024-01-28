@@ -1,5 +1,5 @@
 def with_middlewares(handler, middlewares: list):
-    def modified_handler(event, context, callback):
+    def modified_handler(event, context):
         def chain_middlewares(middlewares_list: list):
             if len(middlewares_list) == 0:
                 return handler
@@ -13,9 +13,8 @@ def with_middlewares(handler, middlewares: list):
             return nest_middlewares
         
         try:
-            result = chain_middlewares(middlewares)(event, context)
-            callback(None, result)
+            return chain_middlewares(middlewares)(event, context)
         except Exception as err:
-            callback(err, None)
+            return err
 
     return modified_handler
